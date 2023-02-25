@@ -16,16 +16,20 @@ const SignIn = ({ onClose }) => {
                 onClose(); // Close the pop-up window on successful sign in
             })
             .catch((error) => {
-                console.log(error);
-                setError(error.message); // Show the error message on failed sign in
+                if (error.code === "auth/invalid-email" || error.code === "auth/wrong-password") {
+                    setError("Sorry invalid email or password");
+                } else {
+                    console.log(error);
+                    setError(error.message); // Show the error message on failed sign in
+                }
             });
+
     };
 
     return (
-        <div className="sign-in-container">
+        <div className="sign-in-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
             <form onSubmit={signIn}>
-            <h1 style={{ textAlign: "center", fontSize: '20px', fontFamily: 'Noto Sans Bengali' }}>Sign In To Your Account</h1>
-
+                <h1 style={{ textAlign: "center", fontSize: '20px', fontFamily: 'Noto Sans Bengali' }}>Sign In To Your Account</h1>
                 <input
                     type="email"
                     placeholder="Enter your email"
@@ -38,7 +42,9 @@ const SignIn = ({ onClose }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 ></input>
-                <button type="submit">Sign In</button>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10vh' }}>
+                    <button type="submit">Sign In</button>
+                </div>
                 {error && <p className="error">{error}</p>}
             </form>
         </div>

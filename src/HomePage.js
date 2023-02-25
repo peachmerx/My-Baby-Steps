@@ -3,6 +3,9 @@ import "./HomePage.css";
 import mumandbub from "./images/mumandbub.png";
 import Login from "./SignIn";
 import CreateAccount from "./CreateAccount";
+import { db } from "./firebase";
+import { getDocs, collection } from "firebase/firestore";
+
 
 function HomePage() {
     const [showPopup, setShowPopup] = useState(true);
@@ -29,6 +32,17 @@ function HomePage() {
         setShowCreateAccount(false);
     };
 
+    const babiesRef = collection(db, "babies");
+
+    getDocs(babiesRef)
+        .then((value) => {
+            console.log(value)
+            value.forEach((row) => {
+                console.log(row.id, ", ", row.data());
+            })
+        }
+        )
+
     return (
         <div className="home-page">
             {showPopup && (
@@ -42,9 +56,7 @@ function HomePage() {
                             eager to demonstrate in my portfolio. I hope you enjoy browsing
                             through the app, and thank you for visiting!
                         </p>
-                        <button className="close" onClick={closePopup}>
-                            CLOSE
-                        </button>
+                        <button className="close" onClick={closePopup}>X</button>
                     </div>
                 </div>
             )}
@@ -52,7 +64,7 @@ function HomePage() {
                 <div className="popup">
                     <div className="popup-content">
                         <button className="close" onClick={closeLoginPopup}>
-                            CLOSE
+                            X
                         </button>
                         <Login onClose={closeLoginPopup} />
                     </div>
@@ -62,7 +74,7 @@ function HomePage() {
                 <div className="popup">
                     <div className="popup-content">
                         <button className="close" onClick={closeCreateAccountPopup}>
-                            CLOSE
+                            X
                         </button>
                         <CreateAccount onClose={closeCreateAccountPopup} />
                     </div>
