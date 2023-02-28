@@ -1,0 +1,161 @@
+.baby-profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    background-color: #F4EBDC;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    background-color: #F4EBDC;
+    border-bottom: solid 0.5px #EB9268;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    background-color: #F4EBDC;
+    border-bottom: solid 0.5px #EB9268;
+}
+
+.title_profile {
+    font-family: 'Sacramento', cursive;
+    font-weight: 100;
+    font-size: 30px;
+    color: #EB9268;
+    margin-left: auto; 
+}
+.nav-button {
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    margin-right: auto; 
+}
+
+.image-logo {
+    padding-left: 3rem;
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #F4EBDC;
+}
+
+h2.baby-name {
+    font-family: 'Noto Sans Bengali', sans-serif;
+    text-align: center;
+    color: #EB9268;
+    font-size: 50px;
+    margin-bottom: .5rem;
+    margin-top: .5rem;
+}
+
+.baby-age {
+    font-family: 'Noto Sans Bengali', sans-serif;
+    color: #EB9268;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 0rem;
+}
+
+.birth-details {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    background-color: #CCE7D1;
+    color: #EB9268;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    margin-right: 50px;
+}
+
+.birth-details:hover {
+    border: .01rem solid white;
+    background-color: #E7B8A6;
+    color: white;
+}
+
+
+.immunisations {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    background-color: #F3D982;
+    color: #EB9268;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.immunisations:hover {
+    border: .01rem solid white;
+    background-color: #E7B8A6;
+    color: white;
+}
+
+.popup-content-birth-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 250px;
+    color: #F4EBDC;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    background-color: #EB9268;
+    padding: 6rem;
+    border-radius: 2rem;
+    border: solid 0.1rem #F4EBDC;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content-birth-details button.close {
+    position: relative;
+    top: 0%;
+    left: 0%;
+    margin-left: 28rem;
+    font-size: 1rem;
+    background: none;
+    cursor: pointer;
+    color: #F4EBDC;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F4EBDC;
+    border-top: solid 0.01rem #EB9268;
+    height: 5rem;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.social-icons a {
+    margin: 0 1rem;
+    font-size: 2rem;
+    color: #EB9268;
+}
+
+.social-icons a:hover {
+    color: white;
+}

@@ -1,0 +1,50 @@
+/* CSS for the pop-up container */
+.popup-immunisations {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 700px;
+    height: 400px;
+    color: #F4EBDC;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    background-color: #EB9268;
+    padding: 6rem;
+    border-radius: 2rem;
+    border: solid 0.1rem #F4EBDC;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.popup-header-immunisations {
+    margin: 0;
+}
+
+.immun-scroll {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.title-immunisations {
+    color: #F4EBDC;
+    font-family: 'Noto Sans Bengali', sans-serif;
+}
+
+.popup-content-immunisations {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+
+/* CSS to remove bullets from the list items */
+ul.no-bullets {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* CSS for the list item checkboxes */
+ul.no-bullets li input[type="checkbox"] {
+    margin-right: 10px;
+}

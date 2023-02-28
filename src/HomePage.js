@@ -3,9 +3,6 @@ import "./HomePage.css";
 import mumandbub from "./images/mumandbub.png";
 import Login from "./SignIn";
 import CreateAccount from "./CreateAccount";
-import { db } from "./firebase";
-import { getDocs, collection } from "firebase/firestore";
-
 
 function HomePage() {
     const [showPopup, setShowPopup] = useState(true);
@@ -31,17 +28,6 @@ function HomePage() {
     const closeCreateAccountPopup = () => {
         setShowCreateAccount(false);
     };
-
-    const babiesRef = collection(db, "babies");
-
-    getDocs(babiesRef)
-        .then((value) => {
-            console.log(value)
-            value.forEach((row) => {
-                console.log(row.id, ", ", row.data());
-            })
-        }
-        )
 
     return (
         <div className="home-page">
@@ -96,14 +82,14 @@ function HomePage() {
                     Create Account
                 </button>
             </div>
-            <div className="icons">
+            {/* <div className="icons">
                 <a href="https://github.com/your-account">
                     <i className="fab fa-github"></i>
                 </a>
                 <a href="https://www.linkedin.com/in/your-account/">
                     <i className="fab fa-linkedin"></i>
                 </a>
-            </div>
+            </div> */}
         </div>
     );
 }
