@@ -24,6 +24,26 @@
     border-bottom: solid 0.5px #EB9268;
 }
 
+.nav-account {
+    background: none;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    color: #EB9268;
+}
+
+.nav-account:hover {
+    color: #CCE7D1;
+}
+
+.nav-signout {
+    background: none;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    color: #EB9268;
+}
+
+.nav-signout:hover {
+    color: #CCE7D1;
+}
+
 .title_profile {
     font-family: 'Sacramento', cursive;
     font-weight: 100;
@@ -86,6 +106,17 @@ h2.baby-name {
     border: .01rem solid white;
     background-color: #E7B8A6;
     color: white;
+}
+
+.birthdetails-container {
+    border: solid 0.01rem #F4EBDC;
+    width: 400px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.p-birthdetails {
+    border-bottom: solid 0.01rem #F4EBDC;
 }
 
 
@@ -159,3 +190,4 @@ h2.baby-name {
 .social-icons a:hover {
     color: white;
 }
+

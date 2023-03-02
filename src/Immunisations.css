@@ -9,24 +9,44 @@
     color: #F4EBDC;
     font-family: 'Noto Sans Bengali', sans-serif;
     background-color: #EB9268;
-    padding: 6rem;
+    padding: 4rem;
     border-radius: 2rem;
     border: solid 0.1rem #F4EBDC;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
 }
 
 .popup-header-immunisations {
-    margin: 0;
+    margin: 0rem;
+
 }
 
 .immun-scroll {
     overflow: scroll;
     overflow-x: hidden;
+    border: solid 0.01rem #F4EBDC;
+    margin-bottom: 0.01rem;
+    margin-top: 0.01rem;
+    padding: 2rem;
+    width: 700px;
+}
+
+.immun-scroll h4 {
+    font-size: 20px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    border-bottom: solid 0.01rem #F4EBDC;
 }
 
 .title-immunisations {
     color: #F4EBDC;
     font-family: 'Noto Sans Bengali', sans-serif;
+    margin-top: -25px;
+    font-size: 1.5rem;
+
 }
 
 .popup-content-immunisations {
@@ -37,14 +57,93 @@
 
 }
 
-
-/* CSS to remove bullets from the list items */
-ul.no-bullets {
-    list-style: none;
-    padding-left: 0;
+.close-immunisations {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 2.5rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    color: #F4EBDC;
 }
 
-/* CSS for the list item checkboxes */
+ul.no-bullets li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-left: auto;
+}
+
 ul.no-bullets li input[type="checkbox"] {
-    margin-right: 10px;
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.checkbox-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-left: 10px;
+    color: #EB9268;
+    width: 1rem;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid #D3E3D6;
+    width: 20px;
+    height: 20px;
+    border-radius: 2rem;
+    outline: none;
+    transition: background-color 0.2s ease-out;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #cce7d1;
+    border: solid 1px #F4EBDC;
+}
+
+input[type="checkbox"]:checked+label {
+    text-decoration: line-through;
+}
+
+input {
+    padding: 15px 15px;
+}
+
+.birth-first {
+    margin-right: 515px;
+}
+
+ul.no-bullets li.birth-first input[type="checkbox"] {
+    margin-left: auto;
+    display: inline-block;
+    margin-right: 1rem;
+    background-color: #F4EBDC;
+}
+
+ul.no-bullets li.birth-first input[type="checkbox"]:checked {
+    background-color: #cce7d1;
+    border: solid 1px #F4EBDC;
+}
+
+
+ul.no-bullets li.birth-first {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-left: auto;
+}
+
+.line-through {
+    text-decoration: line-through;
 }

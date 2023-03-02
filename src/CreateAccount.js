@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase";
-import BabyDetails from "./BabyDetails";
+import AddBabyDetails from "./AddBabyDetails";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
-const CreateAccount = ({ onClose }) => {
+function CreateAccount({ onClose }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -11,34 +12,39 @@ const CreateAccount = ({ onClose }) => {
     const [error, setError] = useState("");
     const [createAccountSuccess, setCreateAccountSuccess] = useState(false);
 
-    const createAccount = (e) => {
-        e.preventDefault();
+    async function handleSubmit(event) {
+        event.preventDefault();
         if (password !== confirmPassword) {
             setError("Passwords do not match");
             return;
         }
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                console.log(userCredential);
-                setCreateAccountSuccess(true);
-            })
-            .catch((error) => {
-                console.log(error);
-                setError(error.message);
-            });
-    };
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const db = getFirestore();
+            const userId = userCredential.user.uid;
+            const parentRef = `users/${userId}`;
+            const babyDetails = {
+                parent: parentRef
+            };
+            await addDoc(collection(db, "babies"), babyDetails);
+            setCreateAccountSuccess(true);
+        } catch (error) {
+            console.log(error);
+            setError(error.message);
+        }
+    }
 
-    const handleOnClose = () => {
+    function handleOnClose() {
         onClose();
         setCreateAccountSuccess(false);
-    };
+    }
 
     return (
         <div className="create-account-container">
             {createAccountSuccess ? (
-                <BabyDetails onClose={handleOnClose} />
+                <AddBabyDetails onClose={handleOnClose} />
             ) : (
-                <form onSubmit={createAccount}>
+                <form onSubmit={handleSubmit}>
                     <h1 style={{ textAlign: "center", fontSize: "20px", fontFamily: "Noto Sans Bengali" }}>Create an Account</h1>
                     <input
                         type="text"
@@ -72,6 +78,6 @@ const CreateAccount = ({ onClose }) => {
             )}
         </div>
     );
-};
+}
 
 export default CreateAccount;

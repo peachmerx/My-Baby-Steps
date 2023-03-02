@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import Immunisations from "./Immunisations";
+import ImmunisationsData from './Immunisations';
+import Account from './Account';
 import { db } from "./firebase";
 import { getAuth, signOut } from "firebase/auth";
 import { Navigate } from "react-router-dom";
@@ -16,6 +17,16 @@ const BabyProfile = () => {
     const [birthDetails, setBirthDetails] = useState({});
     const [showImmunisations, setShowImmunisations] = useState(false);
     const [immunisations, setImmunisations] = useState({});
+    const [showAccount, setShowAccount] = useState(false);
+    const [isEditingBirthDetails, setIsEditingBirthDetails] = useState(false);
+    const [editedBirthDetails, setEditedBirthDetails] = useState({
+        hospital: "",
+        birth_date: null,
+        weight: "",
+        length: "",
+        head_circumference: "",
+        name: "",
+    });
 
     useEffect(() => {
         const fetchBabyDetails = async () => {
@@ -62,6 +73,22 @@ const BabyProfile = () => {
             });
     };
 
+    const handleAccount = () => {
+        setShowAccount(true);
+        setShowBirthDetails(false);
+        setShowImmunisations(false);
+    };
+
+    const handleEditBirthDetails = () => {
+        setIsEditingBirthDetails(true);
+        setEditedBirthDetails(birthDetails);
+    };
+
+    const handleCancelEditBirthDetails = () => {
+        setIsEditingBirthDetails(false);
+      };
+      
+
     if (isSignedOut) {
         return <Navigate to="/" replace={true} />;
     }
@@ -79,7 +106,9 @@ const BabyProfile = () => {
     return (
         <div className="baby-profile">
             <div className="header">
-                <button className="nav-button">MENU</button>
+                <button className="nav-account" onClick={handleAccount}>Account</button>
+                {showAccount && <Account onClose={() => setShowAccount(false)} />}
+                <button className="nav-signout" onClick={handleSignOut}>Sign Out</button>
                 <img className="image-logo" src={mumandbub} alt="Mum and Baby Outline Drawing" height="60" />
                 <h1 className="title_profile">My Baby Steps</h1>
             </div>
@@ -120,15 +149,15 @@ const BabyProfile = () => {
                         <div className="birthdetails-container">
                             <div className="birth-details-left">
                                 <div className="baby-name">
-                                    <p><strong>Name:</strong> {birthDetails.name}</p>
+                                    <p className="p-birthdetails"><strong>Name:</strong> {birthDetails.name}</p>
                                 </div>
-                                <p><strong>Name of Hospital:</strong> {birthDetails.hospital}</p>
-                                <p><strong>Date of Birth:</strong> {formattedBirthDate}</p>
+                                <p className="p-birthdetails"><strong>Name of Hospital:</strong> {birthDetails.hospital}</p>
+                                <p className="p-birthdetails"><strong>Date of Birth:</strong> {formattedBirthDate}</p>
                             </div>
                             <div className="birth-details-right">
-                                <p><strong>Weight:</strong> {birthDetails.weight}</p>
-                                <p><strong>Length:</strong> {birthDetails.length}</p>
-                                <p><strong>Head Circumference:</strong> {birthDetails.head_circumference}</p>
+                                <p className="p-birthdetails"><strong>Weight:</strong> {birthDetails.weight}</p>
+                                <p className="p-birthdetails"><strong>Length:</strong> {birthDetails.length}</p>
+                                <p className="p-birthdetails"><strong>Head Circumference:</strong> {birthDetails.head_circumference}</p>
                             </div>
                         </div>
                     </div>
@@ -136,11 +165,11 @@ const BabyProfile = () => {
             )}
 
             {showImmunisations && (
-                <Immunisations showImmunisations={showImmunisations} toggleImmunisations={toggleImmunisations} />
+                <ImmunisationsData onClose={() => setShowImmunisations(false)} setShowImmunisations={setShowImmunisations} />
             )}
 
         </div>
     );
-};
+}
 
 export default BabyProfile;

@@ -4,7 +4,6 @@ import HomePage from './HomePage';
 import SignIn from './SignIn';
 import CreateAccount from "./CreateAccount";
 import BabyProfile from './BabyProfile';
-import BirthDetails from './BirthDetails';
 import Immunisations from './Immunisations';
 
 function App() {
@@ -16,7 +15,6 @@ function App() {
           <Route path="/login" element={<SignIn />} />
           <Route path="/create-account" element={<CreateAccount />} />
           <Route path="/baby-profile" element={<BabyProfile />} />
-          <Route path="/birth-details" element={<BirthDetails />} />
           <Route path="/immunisations" element={<Immunisations />} />
         </Routes>
       </Router>
