@@ -2,18 +2,19 @@ import { useState, useEffect } from "react";
 import ImmunisationsData from './Immunisations';
 import Account from './Account';
 import { db } from "./firebase";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { Navigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import mumandbub from "./images/mumandbub.png";
 import "./BabyProfile.css";
 
-const BabyProfile = () => {
+function BabyProfile() {
     const [babyName, setBabyName] = useState("");
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [babyAge, setBabyAge] = useState("");
     const [isSignedOut, setIsSignedOut] = useState(false);
     const [showBirthDetails, setShowBirthDetails] = useState(false);
+    const [showShare, setShowShare] = useState(false);
     const [birthDetails, setBirthDetails] = useState({});
     const [showImmunisations, setShowImmunisations] = useState(false);
     const [immunisations, setImmunisations] = useState({});
@@ -29,25 +30,41 @@ const BabyProfile = () => {
     });
 
     useEffect(() => {
-        const fetchBabyDetails = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, "babies"));
-                const babyDetails = querySnapshot.docs[0].data();
-                setBabyName(babyDetails.name);
-                setDateOfBirth(babyDetails.birth_date);
-                setBirthDetails({
-                    hospital: babyDetails.hospital,
-                    birth_date: babyDetails.birth_date,
-                    weight: babyDetails.weight,
-                    length: babyDetails.length,
-                    head_circumference: babyDetails.head_circumference,
-                    name: babyDetails.name
-                });
-            } catch (error) {
-                console.log("Error fetching baby details:", error);
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const fetchBabyDetails = async () => {
+                    try {
+                        const userId = user.uid;
+                        const childrenRef = collection(db, `users/${userId}/children`);
+                        const querySnapshot = await getDocs(childrenRef);
+
+                        await Promise.all(querySnapshot.docs.map(async (childDoc) => {
+                            const childId = childDoc.id;
+                            const babyDetailsRef = doc(db, `users/${userId}/children/${childId}/baby_details/birth_details`);
+                            const babyDetailsSnapshot = await getDoc(babyDetailsRef);
+                            const babyDetails = babyDetailsSnapshot.data();
+                            if (babyDetails) {
+                                setBabyName(babyDetails.baby_name);
+                                setDateOfBirth(babyDetails.birth_date);
+                                setBirthDetails({
+                                    hospital: babyDetails.hospital,
+                                    birth_date: babyDetails.birth_date,
+                                    weight: babyDetails.weight,
+                                    length: babyDetails.length,
+                                    head_circumference: babyDetails.head_circumference,
+                                    baby_name: babyDetails.baby_name
+                                });
+                            }
+                        }));
+                    } catch (error) {
+                        console.log("Error fetching baby details:", error);
+                    }
+                };
+                fetchBabyDetails();
             }
-        };
-        fetchBabyDetails();
+        });
+        return () => unsubscribe();
     }, []);
 
     useEffect(() => {
@@ -86,8 +103,9 @@ const BabyProfile = () => {
 
     const handleCancelEditBirthDetails = () => {
         setIsEditingBirthDetails(false);
-      };
-      
+    };
+
+
 
     if (isSignedOut) {
         return <Navigate to="/" replace={true} />;
@@ -95,6 +113,10 @@ const BabyProfile = () => {
 
     const toggleBirthDetails = () => {
         setShowBirthDetails(!showBirthDetails);
+    };
+
+    const toggleShare = () => {
+        setShowShare(!showShare);
     };
 
     const toggleImmunisations = () => {
@@ -142,6 +164,7 @@ const BabyProfile = () => {
             {showBirthDetails && (
                 <div className="popup">
                     <div className="popup-content-birth-details">
+                        <button className="share" onClick={toggleShare}>Share</button>
                         <button className="close" onClick={toggleBirthDetails}>
                             X
                         </button>
@@ -149,7 +172,7 @@ const BabyProfile = () => {
                         <div className="birthdetails-container">
                             <div className="birth-details-left">
                                 <div className="baby-name">
-                                    <p className="p-birthdetails"><strong>Name:</strong> {birthDetails.name}</p>
+                                    <p className="p-birthdetails"><strong>Name:</strong> {birthDetails.baby_name}</p>
                                 </div>
                                 <p className="p-birthdetails"><strong>Name of Hospital:</strong> {birthDetails.hospital}</p>
                                 <p className="p-birthdetails"><strong>Date of Birth:</strong> {formattedBirthDate}</p>

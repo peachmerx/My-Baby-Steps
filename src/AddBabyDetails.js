@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 
 function AddBabyDetails({ onClose, userId }) {
     const [formData, setFormData] = useState({
-        babyName: "",
+        name: "",
         birthDate: "",
         hospital: "",
         weight: "",
@@ -40,7 +40,7 @@ function AddBabyDetails({ onClose, userId }) {
             <h2 className="popup-header-baby-details">Baby Details</h2>
             <form onSubmit={handleAddBabyDetails}>
                 <label htmlFor="baby_name">Baby Name:</label>
-                <input type="text" id="baby_name" name="babyName" value={formData.babyName} onChange={handleInputChange} />
+                <input type="text" id="baby_name" name="baby_name" value={formData.name} onChange={handleInputChange} />
 
                 <label htmlFor="birth_date">Birth Date:</label>
                 <input type="date" id="birth_date" name="birthDate" value={formData.birthDate} onChange={handleInputChange} />

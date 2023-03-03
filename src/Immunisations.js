@@ -1,72 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { collection, getDocs, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { doc, updateDoc } from 'firebase/firestore';
+import { getDatabase, ref, set } from "firebase/database";
+import { auth } from './firebase';
 import './Immunisations.css';
 
-function ImmunisationsData({ onClose, setShowImmunisations }) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [immunisations, setImmunisations] = useState([]);
-    const currentUserId = // get the current user's id here
+function ImmunisationsData({ onClose, setShowImmunisations, childDoc, handleCheckboxChange }) {
+    const [immunisations, setImmunisations] = useState({});
+    const [ages, setAges] = useState([
+        'birth',
+        'two_months',
+        'four_months',
+        'six_months',
+        'twelve_months',
+        'eighteen_months',
+        'four_years'
+    ]);
 
-        useEffect(() => {
-            const babiesRef = collection(db, 'babies');
-            const immunisationsRef = collection(db, 'immunisations');
-
-            const fetchData = async () => {
-                try {
-                    const babiesSnapshot = await getDocs(babiesRef);
-                    const babiesData = babiesSnapshot.docs.map((doc) => {
-                        return { id: doc.id, ...doc.data() };
-                    });
-
-                    const immunisationsSnapshot = await getDocs(immunisationsRef);
-                    const immunisationsData = immunisationsSnapshot.docs.map((doc) => {
-                        const baby = babiesData.find((b) => b.id === doc.id);
-                        if (baby && baby.user_id === currentUserId) { // Add a check for the baby object
-                            return { id: doc.id, immunisation: doc.data(), ...baby };
-                        }
-                    }).filter((immunisation) => immunisation != null);
-
-                    setImmunisations(immunisationsData);
-                    setIsLoading(false);
-                } catch (error) {
-                    console.log(error);
-                }
-            };
-
-            fetchData();
-        }, []);
-
-    const handleCheckboxChange = async (immunisationId, type, item, isChecked) => {
-        const immunisationsRef = doc(db, 'immunisations', immunisationId);
-        const dataToUpdate = {
-            [`${type}.${item}`]: isChecked
-        };
-
-        try {
-            await updateDoc(immunisationsRef, dataToUpdate);
-            console.log('Document updated successfully');
-
-            setImmunisations(prevState => prevState.map(immunisation => {
-                if (immunisation.id === immunisationId) {
-                    return {
-                        ...immunisation,
-                        immunisation: {
-                            ...immunisation.immunisation,
-                            [type]: {
-                                ...immunisation.immunisation[type],
-                                [item]: isChecked
-                            }
-                        }
-                    };
-                }
-                return immunisation;
-            }));
-        } catch (error) {
-            console.error(error);
+    useEffect(() => {
+        if (childDoc) {
+            fetchImmunisations(childDoc.id);
         }
-    };
+    }, [childDoc]);
+
+    async function fetchImmunisations(childId) {
+        const userId = auth.currentUser.uid;
+        const childRef = doc(db, `users/${userId}/children/${childId}`);
+        const immunisationsRef = doc(childRef, 'baby_details', 'immunisations');
+
+        onSnapshot(immunisationsRef, (doc) => {
+            if (doc.exists()) {
+                const vaccines = doc.data();
+
+                const allImmunisations = ages.reduce((acc, age) => {
+                    acc[age] = vaccines[age] ? vaccines[age] : [];
+                    return acc;
+                }, {});
+
+                setImmunisations(allImmunisations);
+            } else {
+                console.log("No immunisations data found for this child.");
+            }
+        }, (error) => {
+            console.error(error);
+        });
+    }
 
     return (
         <div className="popup-immunisations">
@@ -79,102 +57,26 @@ function ImmunisationsData({ onClose, setShowImmunisations }) {
                     }}>X</button>
                 </div>
             </div>
-            {immunisations.map((immunisation) => (
-                <div className='immun-scroll' key={immunisation.id}>
-                    <h3>{immunisation.name}</h3>
-                    <div>
-                        <h4>Birth</h4>
-                        <ul className="no-bullets">
-                            {immunisation.immunisation.birth.map((item) => (
-                                <li key={item}>
-                                    <div className="checkbox-container">
-                                        <input type="checkbox" checked={immunisation.immunisation.birth[item]} onChange={(e) => handleCheckboxChange(immunisation.id, 'immunisation', `birth.${item}`, e.target.checked)} />
-                                        <span>{item}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+            <form>
+                {ages.map((age) => (
+                    <div key={age}>
+                        <div>{age}</div>
+                        {immunisations[age].map((object, index) => (
+                            <div key={index}>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name={`${age}-${index}`}
+                                        checked={object.checked}
+                                        onChange={(e) => handleCheckboxChange(e, age, index)}
+                                    />
+                                    {object.vaccine}
+                                </label>
+                            </div>
+                        ))}
                     </div>
-                    <div>
-                        <h4>Two Months Old</h4>
-                        <ul className="no-bullets">
-                            {immunisation.immunisation.two_months.map((item) => (
-                                <li key={item}>
-                                    <div className="checkbox-container">
-                                        <input type="checkbox" checked={immunisation.immunisation.two_months[item]} onChange={(e) => handleCheckboxChange(immunisation.id, 'immunisation', `two_months.${item}`, e.target.checked)} />
-                                        <span>{item}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Four Months</h4>
-                        <ul className="no-bullets">
-                            {immunisation.immunisation.four_months.map((item) => (
-                                <li key={item}>
-                                    <div className="checkbox-container">
-                                        <input type="checkbox" checked={immunisation.immunisation.four_months[item]} onChange={(e) => handleCheckboxChange(immunisation.id, 'immunisation', `four_months.${item}`, e.target.checked)} />
-                                        <span>{item}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Six Months</h4>
-                        <ul className="no-bullets">
-                            {immunisation.immunisation.six_months.map((item) => (
-                                <li key={item}>
-                                    <div className="checkbox-container">
-                                        <input type="checkbox" checked={immunisation.immunisation.six_months[item]} onChange={(e) => handleCheckboxChange(immunisation.id, 'immunisation', `six_months.${item}`, e.target.checked)} />
-                                        <span>{item}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Twelve Months</h4>
-                        <ul className="no-bullets">
-                            {immunisation.immunisation.twelve_months.map((item) => (
-                                <li key={item}>
-                                    <div className="checkbox-container">
-                                        <input type="checkbox" checked={immunisation.immunisation.twelve_months[item]} onChange={(e) => handleCheckboxChange(immunisation.id, 'immunisation', `twelve_months.${item}`, e.target.checked)} />
-                                        <span>{item}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Eighteen Months</h4>
-                        <ul className="no-bullets">
-                            {immunisation.immunisation.eighteen_months.map((item) => (
-                                <li key={item}>
-                                    <div className="checkbox-container">
-                                        <input type="checkbox" checked={immunisation.immunisation.eighteen_months[item]} onChange={(e) => handleCheckboxChange(immunisation.id, 'immunisation', `eighteen_months.${item}`, e.target.checked)} />
-                                        <span>{item}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Four Years</h4>
-                        <ul className="no-bullets">
-                            {immunisation.immunisation.four_years.map((item) => (
-                                <li key={item}>
-                                    <div className="checkbox-container">
-                                        <input type="checkbox" checked={immunisation.immunisation.four_years[item]} onChange={(e) => handleCheckboxChange(immunisation.id, 'immunisation', `four_years.${item}`, e.target.checked)} />
-                                        <span>{item}</span>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            ))}
+                ))}
+            </form>
         </div>
     );
 }

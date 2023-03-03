@@ -107,8 +107,12 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-    background-color: #cce7d1;
+    background-color: red;
     border: solid 1px #F4EBDC;
+}
+
+input[type="checkbox"]:checked+span {
+    color: red;
 }
 
 input[type="checkbox"]:checked+label {
@@ -119,31 +123,3 @@ input {
     padding: 15px 15px;
 }
 
-.birth-first {
-    margin-right: 515px;
-}
-
-ul.no-bullets li.birth-first input[type="checkbox"] {
-    margin-left: auto;
-    display: inline-block;
-    margin-right: 1rem;
-    background-color: #F4EBDC;
-}
-
-ul.no-bullets li.birth-first input[type="checkbox"]:checked {
-    background-color: #cce7d1;
-    border: solid 1px #F4EBDC;
-}
-
-
-ul.no-bullets li.birth-first {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    margin-left: auto;
-}
-
-.line-through {
-    text-decoration: line-through;
-}
