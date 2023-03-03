@@ -139,6 +139,25 @@ h2.baby-name {
     color: white;
 }
 
+.to-do {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    background-color: #F6C698;
+    color: #EB9268;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    margin-left: 50px;
+}
+
+.to-do:hover {
+    border: .01rem solid white;
+    background-color: #E7B8A6;
+    color: white;
+}
+
 .popup-content-birth-details {
     display: flex;
     flex-direction: column;

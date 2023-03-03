@@ -14,14 +14,14 @@ const SignIn = () => {
         e.preventDefault();
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
-                setIsAuthenticated(true); // Set a flag to indicate the user is authenticated
+                setIsAuthenticated(true);
             })
             .catch((error) => {
                 if (error.code === "auth/invalid-email" || error.code === "auth/wrong-password") {
                     setError("Sorry invalid email or password");
                 } else {
                     console.log(error);
-                    setError(error.message); // Show the error message on failed sign in
+                    setError(error.message);
                 }
             });
     };

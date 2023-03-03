@@ -1,84 +1,75 @@
-import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, getDoc, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase';
-import { getDatabase, ref, set } from "firebase/database";
-import { auth } from './firebase';
-import './Immunisations.css';
+import React, { useState, useEffect } from 'react';
+import { db } from "./firebase";
+import { doc, getDoc } from "firebase/firestore";
 
-function ImmunisationsData({ onClose, setShowImmunisations, childDoc, handleCheckboxChange }) {
-    const [immunisations, setImmunisations] = useState({});
-    const [ages, setAges] = useState([
-        'birth',
-        'two_months',
-        'four_months',
-        'six_months',
-        'twelve_months',
-        'eighteen_months',
-        'four_years'
-    ]);
+function ImmunisationsData() {
+    const [immunisationData, setImmunisationData] = useState(null);
+
+    const userId = "gGO7OvCLuHRrIwaG3q9loH8KV443";
+    const childId = "x7XGtVpnPmC9hX79iUkJ";
 
     useEffect(() => {
-        if (childDoc) {
-            fetchImmunisations(childDoc.id);
-        }
-    }, [childDoc]);
+        const fetchAllImmunisationData = async () => {
+            try {
+                const immunisationsRef = doc(db, `users/${userId}/children/${childId}/baby_details/immunisations`);
+                const immunisationsSnapshot = await getDoc(immunisationsRef);
+                const immunisationsData = immunisationsSnapshot.data();
+                const allImmunisationData = {};
 
-    async function fetchImmunisations(childId) {
-        const userId = auth.currentUser.uid;
-        const childRef = doc(db, `users/${userId}/children/${childId}`);
-        const immunisationsRef = doc(childRef, 'baby_details', 'immunisations');
+                for (const age in immunisationsData) {
+                    const vaccines = immunisationsData[age];
+                    for (const vaccine in vaccines) {
+                        const immunisationId = Object.keys(vaccines).find((key) => vaccines[key].name === vaccine);
+                        const immunisationRef = doc(db, `users/${userId}/children/${childId}/baby_details/immunisations/${age}/${immunisationId}`);
+                        const immunisationSnapshot = await getDoc(immunisationRef);
+                        const immunisationData = immunisationSnapshot.data();
+                        allImmunisationData[age] = allImmunisationData[age] || {};
+                        allImmunisationData[age][vaccine] = immunisationData;
 
-        onSnapshot(immunisationsRef, (doc) => {
-            if (doc.exists()) {
-                const vaccines = doc.data();
+                        console.log(immunisationId);
+                    }
+                }
 
-                const allImmunisations = ages.reduce((acc, age) => {
-                    acc[age] = vaccines[age] ? vaccines[age] : [];
-                    return acc;
-                }, {});
-
-                setImmunisations(allImmunisations);
-            } else {
-                console.log("No immunisations data found for this child.");
+                setImmunisationData(allImmunisationData);
+            } catch (error) {
+                console.log("Error fetching immunisation data:", error);
             }
-        }, (error) => {
-            console.error(error);
-        });
+        };
+
+        fetchAllImmunisationData();
+    }, []);
+
+
+    console.log('Immunisation Data:', immunisationData);
+
+    if (!immunisationData) {
+        return <p>Loading...</p>;
     }
 
     return (
-        <div className="popup-immunisations">
-            <div className="popup-header-immunisations">
-                <h1 className='title-immunisations'>Immunisations</h1>
-                <div>
-                    <button className='close-immunisations' onClick={() => {
-                        setShowImmunisations(false);
-                        onClose();
-                    }}>X</button>
+        <div>
+            {Object.entries(immunisationData).map(([age, vaccines]) => (
+                <div key={age}>
+                    <h3>{age}</h3>
+                    {Object.entries(vaccines).map(([vaccine, data]) => (
+                        <div key={vaccine}>
+                            <h4>{vaccine}</h4>
+                            <ul className="no-bullets">
+                                {Object.entries(data).map(([key, value]) => (
+                                    <li key={key}>
+                                        <span>{key}: </span>
+                                        <span>{JSON.stringify(value)}</span>
+                                    </li>
+                                ))}
+                            </ul>
+
+                        </div>
+                    ))}
                 </div>
-            </div>
-            <form>
-                {ages.map((age) => (
-                    <div key={age}>
-                        <div>{age}</div>
-                        {immunisations[age].map((object, index) => (
-                            <div key={index}>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        name={`${age}-${index}`}
-                                        checked={object.checked}
-                                        onChange={(e) => handleCheckboxChange(e, age, index)}
-                                    />
-                                    {object.vaccine}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </form>
+            ))}
         </div>
     );
 }
+
 
 export default ImmunisationsData;

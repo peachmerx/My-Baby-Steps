@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ImmunisationsData from './Immunisations';
+import TodoList from './ToDo';
 import Account from './Account';
 import { db } from "./firebase";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
@@ -18,16 +19,17 @@ function BabyProfile() {
     const [birthDetails, setBirthDetails] = useState({});
     const [showImmunisations, setShowImmunisations] = useState(false);
     const [immunisations, setImmunisations] = useState({});
+    const [showToDo, setShowToDo] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
-    const [isEditingBirthDetails, setIsEditingBirthDetails] = useState(false);
-    const [editedBirthDetails, setEditedBirthDetails] = useState({
-        hospital: "",
-        birth_date: null,
-        weight: "",
-        length: "",
-        head_circumference: "",
-        name: "",
-    });
+    // const [isEditingBirthDetails, setIsEditingBirthDetails] = useState(false);
+    // const [editedBirthDetails, setEditedBirthDetails] = useState({
+    //     hospital: "",
+    //     birth_date: null,
+    //     weight: "",
+    //     length: "",
+    //     head_circumference: "",
+    //     name: "",
+    // });
 
     useEffect(() => {
         const auth = getAuth();
@@ -94,18 +96,18 @@ function BabyProfile() {
         setShowAccount(true);
         setShowBirthDetails(false);
         setShowImmunisations(false);
+        setShowImmunisations(false);
+        setShowToDo(false);
     };
 
-    const handleEditBirthDetails = () => {
-        setIsEditingBirthDetails(true);
-        setEditedBirthDetails(birthDetails);
-    };
+    // const handleEditBirthDetails = () => {
+    //     setIsEditingBirthDetails(true);
+    //     setEditedBirthDetails(birthDetails);
+    // };
 
-    const handleCancelEditBirthDetails = () => {
-        setIsEditingBirthDetails(false);
-    };
-
-
+    // const handleCancelEditBirthDetails = () => {
+    //     setIsEditingBirthDetails(false);
+    // };
 
     if (isSignedOut) {
         return <Navigate to="/" replace={true} />;
@@ -115,12 +117,16 @@ function BabyProfile() {
         setShowBirthDetails(!showBirthDetails);
     };
 
-    const toggleShare = () => {
-        setShowShare(!showShare);
-    };
+    // const toggleShare = () => {
+    //     setShowShare(!showShare);
+    // };
 
     const toggleImmunisations = () => {
         setShowImmunisations(!showImmunisations);
+    };
+
+    const toggleToDo = () => {
+        setShowToDo(!showToDo);
     };
 
     const formattedBirthDate = birthDetails.birth_date && birthDetails.birth_date.toDate().toLocaleDateString();
@@ -148,7 +154,12 @@ function BabyProfile() {
                     <button className="birth-details" onClick={toggleBirthDetails}>
                         Birth Details
                     </button>
-                    <button className="immunisations" onClick={toggleImmunisations}>Immunisations</button>
+                    <button className="immunisations" onClick={toggleImmunisations}>
+                        Immunisations
+                    </button>
+                    <button className="to-do" onClick={toggleToDo}>
+                        To Do
+                    </button>
                 </div>
             </div>
             <footer className="footer">
@@ -164,7 +175,7 @@ function BabyProfile() {
             {showBirthDetails && (
                 <div className="popup">
                     <div className="popup-content-birth-details">
-                        <button className="share" onClick={toggleShare}>Share</button>
+                        {/* <button className="share" onClick={toggleShare}>Share</button> */}
                         <button className="close" onClick={toggleBirthDetails}>
                             X
                         </button>
@@ -190,6 +201,10 @@ function BabyProfile() {
             {showImmunisations && (
                 <ImmunisationsData onClose={() => setShowImmunisations(false)} setShowImmunisations={setShowImmunisations} />
             )}
+
+            {showToDo && (
+                <TodoList onClose={() => setShowToDo(false)} setShowToDo={setShowToDo} />
+            )}  
 
         </div>
     );

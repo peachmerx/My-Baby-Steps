@@ -17,7 +17,10 @@ function AddBabyDetails({ onClose, userId }) {
         const db = getFirestore();
 
         try {
-            await addDoc(collection(db, "babies"), { ...formData, parent: `users/${userId}` });
+            const userRef = await addDoc(collection(db, "users"), { parent: "users" });
+            const userId = userRef.id;
+
+            await addDoc(collection(db, `users/${userId}/children`), formData);
             onClose();
         } catch (error) {
             console.error("Error adding baby details: ", error);
