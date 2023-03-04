@@ -4,9 +4,9 @@ import { doc, getDoc, getDocs, collection } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Immunisations.css";
 
-function ImmunisationsData() {
+function ImmunisationsData({onClose}) {
     const [immunisationsData, setImmunisationsData] = useState(null);
-
+    
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -53,6 +53,7 @@ function ImmunisationsData() {
         <div className='popup-immunisations'>
             <div>
                 <p className='title-immunisations'>IMMUNISATIONS</p>
+                <button className="close-immunisations" onClick={onClose}>X</button>
             </div>
             <div className='popup-content-immunisations'>
                 {immunisationsData && (

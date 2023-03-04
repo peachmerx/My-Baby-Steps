@@ -73,7 +73,6 @@ function Account({ onClose }) {
             <div className="password">
                 <p><strong>Password:</strong> ********</p>
                 <button className='new-baby' onClick={handleAddBaby}>Add Baby</button>
-                <button className='view-babies' onClick={() => setShowBabies(!showBabies)}>View Babies</button>
                 <button className="close" onClick={onClose}>Close</button>
             </div>
             {showBabies && (

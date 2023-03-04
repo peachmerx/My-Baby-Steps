@@ -99,10 +99,6 @@ function BabyProfile() {
         setShowBirthDetails(!showBirthDetails);
     };
 
-    // const toggleShare = () => {
-    //     setShowShare(!showShare);
-    // };
-
     const toggleImmunisations = () => {
         setShowImmunisations(!showImmunisations);
     };
