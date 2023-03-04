@@ -47,23 +47,31 @@ function ImmunisationsData() {
         return () => unsubscribe();
     }, []);
 
+    const orderedAges = ['birth', 'two_months', 'four_months', 'six_months', 'twelve_months', 'eighteen_months', 'four_years'];
+
     return (
         <div className='popup-immunisations'>
+            <div>
+                <p className='title-immunisations'>IMMUNISATIONS</p>
+            </div>
             <div className='popup-content-immunisations'>
-                <p className=''>IMMUNISATIONS</p>
                 {immunisationsData && (
                     <ul>
-                        {Object.entries(immunisationsData).map(([age, vaccines]) => (
+                        {orderedAges.map((age) => (
                             <li key={age}>
-                                <h3>{`Age: ${age}`}</h3>
-                                <ul>
-                                    {Object.entries(vaccines).map(([vaccine, data]) => (
-                                        <li key={vaccine}>
-                                            <input type="checkbox" checked={data.completed} />
-                                            <label>{data}</label>
-                                        </li>
-                                    ))}
-                                </ul>
+                                {immunisationsData[age] && (
+                                    <div>
+                                        <h3>{age}</h3>
+                                        <ul>
+                                            {Object.entries(immunisationsData[age]).map(([vaccine, data]) => (
+                                                <li key={vaccine}>
+                                                    <input type="checkbox" checked={data.completed} />
+                                                    <label>{data}</label>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </li>
                         ))}
                     </ul>
