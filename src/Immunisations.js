@@ -1,75 +1,76 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, collection } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import "./Immunisations.css";
 
 function ImmunisationsData() {
-    const [immunisationData, setImmunisationData] = useState(null);
-
-    const userId = "gGO7OvCLuHRrIwaG3q9loH8KV443";
-    const childId = "x7XGtVpnPmC9hX79iUkJ";
+    const [immunisationsData, setImmunisationsData] = useState(null);
 
     useEffect(() => {
-        const fetchAllImmunisationData = async () => {
-            try {
-                const immunisationsRef = doc(db, `users/${userId}/children/${childId}/baby_details/immunisations`);
-                const immunisationsSnapshot = await getDoc(immunisationsRef);
-                const immunisationsData = immunisationsSnapshot.data();
-                const allImmunisationData = {};
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const fetchImmunisationsDetails = async () => {
+                    try {
+                        const userId = user.uid;
+                        const childrenRef = collection(db, `users/${userId}/children`);
+                        const querySnapshot = await getDocs(childrenRef);
 
-                for (const age in immunisationsData) {
-                    const vaccines = immunisationsData[age];
-                    for (const vaccine in vaccines) {
-                        const immunisationId = Object.keys(vaccines).find((key) => vaccines[key].name === vaccine);
-                        const immunisationRef = doc(db, `users/${userId}/children/${childId}/baby_details/immunisations/${age}/${immunisationId}`);
-                        const immunisationSnapshot = await getDoc(immunisationRef);
-                        const immunisationData = immunisationSnapshot.data();
-                        allImmunisationData[age] = allImmunisationData[age] || {};
-                        allImmunisationData[age][vaccine] = immunisationData;
+                        const immunisationsData = {};
+                        await Promise.all(querySnapshot.docs.map(async (childDoc) => {
+                            const childId = childDoc.id;
+                            const immunisationsRef = doc(db, `users/${userId}/children/${childId}/baby_details/immunisations`);
+                            const immunisationsSnapshot = await getDoc(immunisationsRef);
+                            const immunisations = immunisationsSnapshot.data();
 
-                        console.log(immunisationId);
+                            if (immunisations) {
+                                for (const age in immunisations) {
+                                    const vaccines = immunisations[age];
+                                    for (const vaccine in vaccines) {
+                                        const immunisationData = vaccines[vaccine];
+                                        immunisationsData[age] = immunisationsData[age] || {};
+                                        immunisationsData[age][vaccine] = immunisationData;
+                                    }
+                                }
+                            }
+                        }));
+                        console.log(immunisationsData)
+                        setImmunisationsData(immunisationsData);
+                    } catch (error) {
+                        console.log("Error fetching immunisations details:", error);
                     }
-                }
-
-                setImmunisationData(allImmunisationData);
-            } catch (error) {
-                console.log("Error fetching immunisation data:", error);
+                };
+                fetchImmunisationsDetails();
             }
-        };
-
-        fetchAllImmunisationData();
+        });
+        return () => unsubscribe();
     }, []);
 
-
-    console.log('Immunisation Data:', immunisationData);
-
-    if (!immunisationData) {
-        return <p>Loading...</p>;
-    }
-
     return (
-        <div>
-            {Object.entries(immunisationData).map(([age, vaccines]) => (
-                <div key={age}>
-                    <h3>{age}</h3>
-                    {Object.entries(vaccines).map(([vaccine, data]) => (
-                        <div key={vaccine}>
-                            <h4>{vaccine}</h4>
-                            <ul className="no-bullets">
-                                {Object.entries(data).map(([key, value]) => (
-                                    <li key={key}>
-                                        <span>{key}: </span>
-                                        <span>{JSON.stringify(value)}</span>
-                                    </li>
-                                ))}
-                            </ul>
-
-                        </div>
-                    ))}
-                </div>
-            ))}
+        <div className='popup-immunisations'>
+            <div className='popup-content-immunisations'>
+                <p className=''>IMMUNISATIONS</p>
+                {immunisationsData && (
+                    <ul>
+                        {Object.entries(immunisationsData).map(([age, vaccines]) => (
+                            <li key={age}>
+                                <h3>{`Age: ${age}`}</h3>
+                                <ul>
+                                    {Object.entries(vaccines).map(([vaccine, data]) => (
+                                        <li key={vaccine}>
+                                            <input type="checkbox" checked={data.completed} />
+                                            <label>{data}</label>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
         </div>
     );
 }
-
 
 export default ImmunisationsData;

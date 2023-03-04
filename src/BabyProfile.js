@@ -21,15 +21,6 @@ function BabyProfile() {
     const [immunisations, setImmunisations] = useState({});
     const [showToDo, setShowToDo] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
-    // const [isEditingBirthDetails, setIsEditingBirthDetails] = useState(false);
-    // const [editedBirthDetails, setEditedBirthDetails] = useState({
-    //     hospital: "",
-    //     birth_date: null,
-    //     weight: "",
-    //     length: "",
-    //     head_circumference: "",
-    //     name: "",
-    // });
 
     useEffect(() => {
         const auth = getAuth();
@@ -99,15 +90,6 @@ function BabyProfile() {
         setShowImmunisations(false);
         setShowToDo(false);
     };
-
-    // const handleEditBirthDetails = () => {
-    //     setIsEditingBirthDetails(true);
-    //     setEditedBirthDetails(birthDetails);
-    // };
-
-    // const handleCancelEditBirthDetails = () => {
-    //     setIsEditingBirthDetails(false);
-    // };
 
     if (isSignedOut) {
         return <Navigate to="/" replace={true} />;
